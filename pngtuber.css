@@ -1,0 +1,13 @@
+.pngtuber {
+    width: 1920px;
+    height: 1920px;
+    position: absolute;
+}
+
+.normal {
+    display: inherit;
+}
+
+.tick, .excited, .entering, .exiting, .blink, .talk {
+    display: none;
+}
