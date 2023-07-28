@@ -76,38 +76,38 @@ traverse(pngtuber,process,"pngtuber");
 
     // smoothing factor for audio processor
     let smoothingTimeConstantBlink = 0;
-    let smoothingTimeConstantTalk = 0;
+    let smoothingTimeConstantTalk = 0.5;
     let smoothingTimeConstantPose = 0.8;
 
     // thresholds for talking (mouth) and shouting (pose)
     // SmoothStart gives a buffer frame for two consecutive polls at a lower threshold
-    let thresholdTalk = 50;
-    let thresholdTalkSmoothStart = 45;
-    let thresholdShoutStart = 70;
-    let thresholdShoutSmoothStart = 60;
-    let thresholdShoutEnd = 55;
+    let thresholdTalk = 32;
+    let thresholdTalkSmoothStart = 28;
+    let thresholdShoutStart = 50;
+    let thresholdShoutSmoothStart = 42;
+    let thresholdShoutEnd = 35;
 
     // How many frames after shout threshold is no longer met before exiting excited pose
-    let maxExcitedEndBuffer = 8;
-    let minExcitedEndBuffer = 3;
+    let maxExcitedEndBuffer = 10;
+    let minExcitedEndBuffer = 5;
     let currentExcitedEndBuffer = 0;
 
     // How many frames of mouth while talking before a frame of closed mouth (no image)
-    let minTalkIntervals = 2;
-    let maxTalkIntervals = 4;
+    let minTalkIntervals = 3;
+    let maxTalkIntervals = 5;
     let currentTalkIntervals = 0;
 
     // Failsafe so you don't get only one frame of mouth if you talk then immediately stop
-    let minTalkLength = 3;
+    let minTalkLength = 4;
     let currentTalkLength = 0;
 
     // How many times your tick can appear consecutively, how many frames between each tick/each blink
     let tickQuantityMax = 3;
     let tickQuantityMin = 1;
-    let tickDelayMax = 100;
-    let tickDelayMin = 50;
-    let blinkDelayMax = 80;
-    let blinkDelayMin = 45;
+    let tickDelayMax = 150;
+    let tickDelayMin = 70;
+    let blinkDelayMax = 100;
+    let blinkDelayMin = 55;
 
     // Keep the rest of these as is, these are state variables
     let currentExitingIntervals = 0;
@@ -180,7 +180,6 @@ traverse(pngtuber,process,"pngtuber");
         for(const volume of volumesTalk)
             volumeSum += volume;
         const averageVolume = volumeSum / volumesTalk.length;
-        //console.log(averageVolume)
 
         isTalk = averageVolume >= thresholdTalk || (isTalkSmoothBuffer && averageVolume >= thresholdTalkSmoothStart)
                 || (isTalk && (currentTalkIntervals != 0 || currentTalkLength < minTalkLength));
@@ -191,9 +190,12 @@ traverse(pngtuber,process,"pngtuber");
             const frame = randomLinear(document.getElementsByClassName('talk').length, 0);
             hideAll(document.getElementsByClassName('talk'), frame);
             currentTalkIntervals--;
-        } else if (currentTalkIntervals == 0) {
-            hideAll(document.getElementsByClassName('talk'))
+        } else if (isTalk && currentTalkIntervals == 0) {
+            hideAll(document.getElementsByClassName('talk'));
             currentTalkIntervals = isTalk ? randomLinear(maxTalkIntervals, minTalkIntervals) : 0;
+        } else {
+            hideAll(document.getElementsByClassName('talk'));
+            currentTalkIntervals = 0;
         }
 
         isTalkSmoothBuffer = (averageVolume >= thresholdTalkSmoothStart);
@@ -212,7 +214,6 @@ traverse(pngtuber,process,"pngtuber");
         for(const volume of volumesPose)
             volumeSum += volume;
         const averageVolume = volumeSum / volumesPose.length;
-        //console.log(averageVolume)
 
         // entering
         if ((averageVolume >= thresholdShoutStart || (isExcitedSmoothBuffer && averageVolume >= thresholdShoutSmoothStart)
