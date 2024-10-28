@@ -81,11 +81,11 @@ traverse(pngtuber,process,"pngtuber");
 
     // thresholds for talking (mouth) and shouting (pose)
     // SmoothStart gives a buffer frame for two consecutive polls at a lower threshold
-    let thresholdTalk = 32;
-    let thresholdTalkSmoothStart = 28;
-    let thresholdShoutStart = 50;
-    let thresholdShoutSmoothStart = 42;
-    let thresholdShoutEnd = 35;
+    let thresholdTalk = 36;
+    let thresholdTalkSmoothStart = 34;
+    let thresholdShoutStart = 52;
+    let thresholdShoutSmoothStart = 48;
+    let thresholdShoutEnd = 40;
 
     // How many frames after shout threshold is no longer met before exiting excited pose
     let maxExcitedEndBuffer = 10;
@@ -93,12 +93,12 @@ traverse(pngtuber,process,"pngtuber");
     let currentExcitedEndBuffer = 0;
 
     // How many frames of mouth while talking before a frame of closed mouth (no image)
-    let minTalkIntervals = 3;
-    let maxTalkIntervals = 5;
+    let minTalkIntervals = 2;
+    let maxTalkIntervals = 3;
     let currentTalkIntervals = 0;
 
     // Failsafe so you don't get only one frame of mouth if you talk then immediately stop
-    let minTalkLength = 4;
+    let minTalkLength = 2;
     let currentTalkLength = 0;
 
     // How many times your tick can appear consecutively, how many frames between each tick/each blink
